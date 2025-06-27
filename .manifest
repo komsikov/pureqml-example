@@ -1,0 +1,29 @@
+{
+  "platforms": [
+    "web",
+    "webos",
+    "tizen",
+    "orsay",
+    "netcast",
+    "hisense",
+    "androidtv"
+  ],
+  "properties": {
+    "title": "PureQML_cordova",
+    "version": "0.0.1",
+    "iconColor": "#242424",
+    "androidBuild": {
+      "keystore": "./keystore/path/mockup",
+      "storePassword": "keystorePasswordMockup",
+      "alias": "aliasMockup",
+      "password": "passwordMockup"
+    }
+  },
+  "apps": {
+    "app": "index"
+  },
+  "templater": "jinja2",
+  "minify": false,
+  "package": "PureQML_cordova",
+  "useNativeFocusForInput": false
+}

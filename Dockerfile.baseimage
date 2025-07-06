@@ -1,0 +1,47 @@
+FROM --platform=linux/amd64 alpine:3.21.3
+
+# Environment variables
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+ENV GRADLE_HOME=/opt/gradle/gradle-8.8
+ENV PATH=$JAVA_HOME/bin:$GRADLE_HOME/bin:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH
+ENV ANDROID_HOME=$ANDROID_SDK_ROOT
+
+# Install system dependencies
+RUN apk update && apk add --no-cache \
+    bash curl unzip zip git python3 py3-pip rsync \
+    openjdk17 build-base libc6-compat \
+    nodejs npm && \
+    ln -sf python3 /usr/bin/python
+
+# Create default Python virtual environment
+RUN python -m venv /root/venv
+
+# Set environment to use virtualenv by default
+ENV VIRTUAL_ENV=/root/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Install Gradle 8.8
+RUN mkdir -p /opt/gradle && \
+    curl -L https://services.gradle.org/distributions/gradle-8.8-bin.zip -o /tmp/gradle.zip && \
+    unzip /tmp/gradle.zip -d /opt/gradle && \
+    rm /tmp/gradle.zip
+
+# Install Android Command Line Tools
+RUN mkdir -p $ANDROID_SDK_ROOT/cmdline-tools && \
+    curl -o /tmp/commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip && \
+    unzip /tmp/commandlinetools.zip -d $ANDROID_SDK_ROOT/cmdline-tools && \
+    mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest && \
+    rm /tmp/commandlinetools.zip
+
+# Accept licenses and install Android components
+RUN yes | sdkmanager --licenses && \
+    sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+# Install latest Cordova globally via npm
+RUN npm install -g cordova
+
+# Sanity checks
+RUN java -version && gradle -v && python --version && pip --version && sdkmanager --list && cordova --version
+
+CMD [ "/bin/bash" ]

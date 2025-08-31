@@ -10,7 +10,9 @@
   ],
   "properties": {
     "title": "PureQML_cordova",
+    "domain": "com.pureqml.example",
     "version": "0.0.1",
+    "versionCode": 1,
     "iconColor": "#242424",
     "androidBuild": {
       "keystore": "./keystore/path/mockup",
